@@ -1,4 +1,5 @@
 from disjointset import DisjointSet
+from pqueue import PriorityQueue
 from .graph import UndirectedWeightedGraph as Graph
 
 def prim(graph : Graph, start):
@@ -22,18 +23,19 @@ def prim(graph : Graph, start):
 
     mtree = dict()
     total_weight = 0
-    queue = PriorityQueue()
+    pq = PriorityQueue()
 
-    queue.push(0,(start, start))
+    pq.push(0,(start, start))
 
-    while queue :
-        node_start, node_end = queue.pop()
+    while pq :
+        _, nodes = pq.pop()
+        node_start, node_end = nodes
         if node_end not in mtree:
             mtree[node_end] = node_start
             total_weight += graph.weight(node_start, node_end)
 
             for next_node, weight in graph.edges[node_end].items():
-                queue.push(weight,(node_end, next_node))
+                pq.push(weight,(node_end, next_node))
 
     return mtree, total_weight
 

@@ -1,6 +1,7 @@
 from collections import defaultdict
+from pqueue import PriorityQueue
 
-def shortest_path_dijkstra(graph, source):
+def shortest_path_one_to_all(graph, source):
     ''' Dijkstra Algorithm: It computes the lowest distance between a source vertice and
     all the other vertices.
 
@@ -29,11 +30,12 @@ def shortest_path_dijkstra(graph, source):
     prev = {source : None}
     done = {}
 
-    pqueue = PriorityQueue()
-    pqueue.push(0, (0, source))
+    pq = PriorityQueue()
+    pq.push(0, (0, source))
 
-    while len(pqueue):
-        dist_u, u = pqueue.pop()
+    while not pq.empty():
+        _, info = pq.pop()
+        dist_u, u = info
 
         if u in done :
             continue
@@ -46,6 +48,6 @@ def shortest_path_dijkstra(graph, source):
             if (not v in dist) or (dist[v] > new_dist_to_v):
                 dist[v] = new_dist_to_v
                 prev[v] = u
-                pqueue.push(new_dist_to_v,(new_dist_to_v,v))
+                pq.push(new_dist_to_v,(new_dist_to_v,v))
 
     return dist, prev

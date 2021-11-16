@@ -1,11 +1,12 @@
 import unittest
 from collections import defaultdict
-from os import path
+from pathlib import Path
 
 from ggraphs import UndirectedWeightedGraph as Graph
 from ggraphs.graph import _VerticeView
 from ggraphs.steiner.parser import ParserORLibrary
 
+from .config import datasets_folder
 
 class TestGraphDictionaryDataStructure(unittest.TestCase):
 
@@ -173,10 +174,13 @@ class TestGraphDictionaryDataStructure(unittest.TestCase):
         self.assertFalse(graph.has_node(5))
         self.assertFalse(graph.has_edge(5,5))
 
+    @unittest.skipIf(
+        not datasets_folder.exists(),
+        "dataset folder doesn't exists"
+    )
     def test_GenerateUndirectEdges(self):
-        diretorio_dados = path.join("datasets", "ORLibrary")
-        arquivo_dados = "steinb1.txt"
-        arquivo = path.join(diretorio_dados, arquivo_dados)
+
+        arquivo = Path(datasets_folder, "steinb1.txt")
 
         stp = ParserORLibrary().parse(arquivo)
 
@@ -189,10 +193,14 @@ class TestGraphDictionaryDataStructure(unittest.TestCase):
 
         self.assertEqual(len(edges),stp.nro_edges)
 
+    @unittest.skipIf(
+        not datasets_folder.exists(),
+        "dataset folder doesn't exists"
+    )
     def test_read_b01(self):
-        diretorio_dados = path.join("datasets", "ORLibrary")
-        arquivo_dados = "steinb1.txt"
-        arquivo = path.join(diretorio_dados, arquivo_dados)
+
+        nome_arquivo = "steinb1.txt"
+        arquivo = Path(datasets_folder, nome_arquivo)
 
         stp = ParserORLibrary().parse(arquivo)
 
@@ -220,7 +228,7 @@ class TestGraphDictionaryDataStructure(unittest.TestCase):
         self.assertEqual(stp.name,'B1')
         self.assertEqual(stp.remark,'Sparse graph with random weights')
         self.assertEqual(stp.creator,'J. E. Beasley')
-        self.assertEqual(stp.file_name, arquivo_dados)
+        self.assertEqual(stp.file_name, nome_arquivo)
 
 if __name__ == "__main__":
     unittest.main()

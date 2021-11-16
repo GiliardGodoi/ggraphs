@@ -1,16 +1,22 @@
 import unittest
-from os import path
+from pathlib import Path
 
 from ggraphs import UndirectedWeightedGraph as Graph
 from ggraphs.mst import prim
 from ggraphs.steiner.parser import ParserORLibrary
 
+from .config import datasets_folder
+
+@unittest.skipIf(
+    not datasets_folder.exists(),
+    "dataset folder doesn't exists"
+)
 class TestMinimumSpanningTree(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
 
-        arquivo = path.join("datasets", "ORLibrary", "steinb1.txt")
+        arquivo = Path(datasets_folder, "steinb1.txt")
 
         cls.stp = ParserORLibrary().parse(arquivo)
         cls.graph = cls.stp.graph

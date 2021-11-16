@@ -1,7 +1,7 @@
 import random
 import unittest
 from collections import deque
-from os import path
+from pathlib import Path
 
 from ggraphs import UndirectedWeightedGraph as Graph
 from ggraphs.steiner import (heuristic_prunning_kruskal,
@@ -11,12 +11,17 @@ from ggraphs.steiner import (heuristic_prunning_kruskal,
                              heuristic_shortest_path_origin_prim)
 from ggraphs.steiner.parser import ParserORLibrary
 
+from .config import datasets_folder
 
+@unittest.skipIf(
+    not datasets_folder.exists(),
+    "dataset folder doesn't exists"
+)
 class TestSTPGHeuristicas(unittest.TestCase):
 
     def setUp(self):
 
-        self.stpg_instance = ParserORLibrary().parse(path.join("datasets", "ORLibrary", "steinb13.txt"))
+        self.stpg_instance = ParserORLibrary().parse(Path(datasets_folder, "steinb13.txt"))
 
         self.graph = self.stpg_instance.graph
         self.terminals = list(self.stpg_instance.terminals)

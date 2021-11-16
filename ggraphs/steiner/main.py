@@ -25,7 +25,8 @@ def heuristic_shortest_path(graph, start, terminals):
     subtree = Graph()
 
     while pq:
-        _, source, target = pq.pop()
+        _, nodes = pq.pop()
+        source, target = nodes
         t = target
 
         if target not in distancias:
@@ -49,7 +50,7 @@ def heuristic_shortest_path(graph, start, terminals):
                     for tmp in terminals:
                         pq.push(distancias[u][tmp], (u,tmp))
 
-    gg, custo = prunning_mst(subtree, start, terminals)
+    gg, custo = heuristic_prunning_mst(subtree, start, terminals)
 
     return gg, custo
 
@@ -112,7 +113,7 @@ def heuristic_shortest_path_origin_prim(graph, start, terminals):
                 w = graph.edges[v][u]
                 subgraph.add_edge(v, u, weight=w)
 
-    subtree, cost = prunning_mst(subgraph, start, terminals)
+    subtree, cost = heuristic_prunning_mst(subgraph, start, terminals)
 
     return subtree, cost
 

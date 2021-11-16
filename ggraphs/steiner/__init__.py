@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from .download import download
 
 from .main import heuristic_prunning_mst
 from .main import heuristic_shortest_path

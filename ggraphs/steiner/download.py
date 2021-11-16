@@ -1,16 +1,17 @@
+from pathlib import Path
 import requests
 import os
 
-problems_class = {
+classes_problems = {
         'b' : {'max' : 18},
         'c' : {'max' : 20},
         'd' : {'max' : 20},
         'e' : {'max' : 20},
-        'others' : ['dv80.txt', 'dv160.txt', 'dv320.txt' ]
+        'dv' : ['dv80.txt', 'dv160.txt', 'dv320.txt' ]
     }
 
 
-def download(file_name):
+def get_file(file_name):
 
     url = f'http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/{file_name}'
     response = requests.get(url)
@@ -29,42 +30,41 @@ def save(content, file_name, folder):
 
 
 def generate_file_names(key = None):
-
-    if isinstance(problems_class[key], list) :
-        for item in problems_class[key]:
+    if isinstance(classes_problems[key], list) :
+        for item in classes_problems[key]:
             yield item
-    elif isinstance(problems_class[key], dict) :
+    elif isinstance(classes_problems[key], dict) :
         counter = 1
-        MAX = problems_class[key]['max']
+        MAX = classes_problems[key]['max']
         while counter <= MAX :
             yield f"stein{key}{counter}.txt"
             counter += 1
 
-if __name__ == "__main__":
+def download(which='all'):
     print('start download...')
 
-    OUTPUT_FOLDER = os.path.join('ORLibrary')
+    OUTPUT_FOLDER = Path('downloads', 'ORLibrary')
 
-    if not os.path.exists(OUTPUT_FOLDER):
-        os.mkdir(OUTPUT_FOLDER)
-    # else :
-    #     if os.listdir(OUTPUT_FOLDER):
-    #         raise Exception("Output folder is not empty")
+    if not OUTPUT_FOLDER.exists():
+        OUTPUT_FOLDER.mkdir(parents=True)
 
+
+    files = None
+    if which == 'all':
+        files = [file for key in classes_problems.keys()
+                    for file in generate_file_names(key) ]
+    elif which in classes_problems:
+        files = [file for file in generate_file_names(which)]
+    elif isinstance(which, (list, tuple)) and all([a in classes_problems for a in which]):
+        files = [file for key in which for file in generate_file_names(key)]
+    else:
+        raise AttributeError(f"which parameters does not correspond to any value expected: {which}")
+
+    # download each file from files
     count = 1
-
-    ## DOWNLOAD ALL FILES
-    # for key in problems_class.keys():
-    #     for file_name in generate_file_names(key):
-    #         data = download(file_name)
-    #         save(data, file_name, OUTPUT_FOLDER)
-    #         print(f'files: {count}', end="\r")
-    #         count += 1
-
-    ## DOWNLOAD ONLY PROBLEMS FROM A ONE CLASS
-    for file_name in generate_file_names('others'):
-            data = download(file_name)
-            save(data, file_name, OUTPUT_FOLDER)
+    for f in files:
+            data = get_file(f)
+            save(data, f, OUTPUT_FOLDER)
             print(f'files: {count}', end="\r")
             count += 1
 

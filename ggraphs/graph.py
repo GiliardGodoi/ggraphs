@@ -55,7 +55,12 @@ class UndirectedGraph:
 
     @property
     def edges(self):
-        return self.__edges
+        visited = set()
+        for v in self.__edges.keys():
+            for u in self.__edges[v]:
+                if not u in visited :
+                    yield (v, u)
+            visited.add(v)
 
     @property
     def vertices(self):
@@ -150,7 +155,12 @@ class UndirectedWeightedGraph:
     @property
     def edges(self):
         ''' Retorna a estrutura de dados utilizada para representar as arestas, neste caso: defaultdict(dict)'''
-        return self.__edges
+        visited = set()
+        for v in self.__edges.keys():
+            for u in self.__edges[v].keys():
+                if not u in visited :
+                    yield (v, u)
+            visited.add(v)
 
     @property
     def vertices(self):
